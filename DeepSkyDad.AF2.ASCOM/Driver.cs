@@ -57,7 +57,7 @@ namespace ASCOM.DeepSkyDad.AF2
     /// <summary>
     /// DSD AF2
     /// </summary>
-    [Guid("10cc53ba-ec1f-4cca-8e95-62aa97be4f96")]
+    [Guid("ab9ee7bc-01ea-4bcd-a4a7-2333b5f635d2")]
     [ClassInterface(ClassInterfaceType.None)]
     public partial class Focuser : IFocuserV2
     {

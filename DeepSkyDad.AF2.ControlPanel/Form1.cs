@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -83,6 +84,8 @@ namespace DeepSkyDad.AF2.ControlPanel
                         richTextboxOutput.Invoke(new AppendOutputTextDelegate(AppendOutputText), new Object[] { "AF2 Connected", false });
                         RefreshUI();
                         ReadFocuserState();
+
+                        RefreshUI();
                     }
                     else
                     {
@@ -135,13 +138,13 @@ namespace DeepSkyDad.AF2.ControlPanel
             ClearUI();
             RefreshUI();
 
-            var timer = new System.Windows.Forms.Timer();
-            timer.Interval = (500);
-            timer.Tick += new EventHandler((object sender, EventArgs e) =>
-            {
-                ReadPositionAndTemperature(false, false);
-            });
-            timer.Start();
+            //var timer = new System.Windows.Forms.Timer();
+            //timer.Interval = (500);
+            //timer.Tick += new EventHandler((object sender, EventArgs e) =>
+            //{
+            //    ReadPositionAndTemperature(false, false);
+            //});
+            //timer.Start();
         }
 
         private void comPortCombo_DropDown(object sender, EventArgs e)
@@ -355,8 +358,37 @@ namespace DeepSkyDad.AF2.ControlPanel
             return true;
         }
 
-        private void MoveForAngle(int angle, string stepMode)
+        private async void MoveForAngle(int angle, string stepMode)
         {
+            var posStr = await _serialService.SendCommand("[GPOS]");
+            var pos = Convert.ToInt32(posStr) + 500;
+            var factor = 1;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            while (true)
+            {
+                posStr = await _serialService.SendCommand("[GPOS]");
+                await _serialService.SendCommand("[GTMC]");
+                var target = Convert.ToInt32(posStr) + 500*factor;
+                factor *= -1;
+                var result = await _serialService.SendCommand($"[STRG{target}]");
+                if (result == "101")
+                    break;
+                await _serialService.SendCommand("[SMOV]");
+
+                while (await _serialService.SendCommand("[GMOV]") == "1")
+                {
+                    await Task.Delay(1000);
+                }
+
+                if (sw.Elapsed.TotalMinutes >= 15)
+                {
+                    break;
+                }
+            }
+            return;
+
             int steps;
             switch (stepMode)
             {

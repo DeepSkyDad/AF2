@@ -317,11 +317,6 @@ namespace ASCOM.DeepSkyDad.AF2
             0,
             0,
             0});
-            this.numericSetPositionOnConnectValue.Minimum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
             this.numericSetPositionOnConnectValue.Name = "numericSetPositionOnConnectValue";
             this.numericSetPositionOnConnectValue.Size = new System.Drawing.Size(121, 20);
             this.numericSetPositionOnConnectValue.TabIndex = 33;

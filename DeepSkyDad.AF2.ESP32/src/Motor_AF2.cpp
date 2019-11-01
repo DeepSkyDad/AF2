@@ -121,7 +121,7 @@ void Motor_AF2::handleMove()
         if (_eeprom->getTargetPosition() < _eeprom->getPosition())
         {
             digitalWrite(MP6500_PIN_DIR, reverseDirection ? LOW : HIGH);
-            while (_eeprom->getPosition() != _eeprom->getTargetPosition())
+            while (_eeprom->getPosition() > _eeprom->getTargetPosition())
             {
                 digitalWrite(MP6500_PIN_STEP, 1);
                 delayMicroseconds(1);
@@ -136,7 +136,7 @@ void Motor_AF2::handleMove()
         else if (_eeprom->getTargetPosition() > _eeprom->getPosition())
         {
             digitalWrite(MP6500_PIN_DIR, reverseDirection ? HIGH : LOW);
-            while (_eeprom->getPosition() != _eeprom->getTargetPosition())
+            while (_eeprom->getPosition() < _eeprom->getTargetPosition())
             {
                 digitalWrite(MP6500_PIN_STEP, 1);
                 delayMicroseconds(1);
